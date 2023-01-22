@@ -8,6 +8,19 @@ services:
     tty: true
     ports:
       - "3000:3000"
+      - '5555:5555'
     volumes:
       - ./:/app
       - /usr/src/app/node_modules
+
+  db:
+    image: 'postgres:12'
+    env_file: .env
+    platform: linux/arm64/v8
+    ports:
+      - '5432'
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
