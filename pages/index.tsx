@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import { Inter } from '@next/font/google'
 import Login from '../components/Login';
+import AddNote from '@/components/AddNote';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -15,7 +16,14 @@ export default function Home() {
       </Head>
       <main className="container">
         <Login />
-        <button className="btn">Add note</button>
+        <label htmlFor="add-note" className="btn">Add note</label>
+        <input type="checkbox" id="add-note" className="modal-toggle" />
+        <div className="modal">
+          <div className="modal-box">
+            <AddNote id="add-note" />
+          </div>
+        </div>
+
         <button className="p-8">Add reminder</button>
         <input placeholder='search' />
         List of notes:

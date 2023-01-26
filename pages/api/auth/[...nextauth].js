@@ -3,7 +3,7 @@ import EmailProvider from "next-auth/providers/email";
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import prisma from "../../../db";
 
-export default NextAuth({
+export const authOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     EmailProvider({
@@ -18,4 +18,17 @@ export default NextAuth({
       from: process.env.EMAIL_FROM
     }),
   ],
-})
+  callbacks: {
+  //   async signIn(params){
+  //     // this is where i would check if user exists on database, return true for valid false for invalid.
+  //   }
+    async session({ session, token, user }) {
+      if (session?.user) {
+        session.user.id = user.id;
+      }
+      return session
+    }
+  }
+};
+
+export default NextAuth(authOptions)
