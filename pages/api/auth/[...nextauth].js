@@ -19,9 +19,9 @@ export const authOptions = {
     }),
   ],
   callbacks: {
-  //   async signIn(params){
-  //     // this is where i would check if user exists on database, return true for valid false for invalid.
-  //   }
+    //   async signIn(params){
+    //     // this is where i would check if user exists on database, return true for valid false for invalid.
+    //   }
     async session({ session, token, user }) {
       if (session?.user) {
         session.user.id = user.id;
