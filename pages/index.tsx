@@ -1,11 +1,17 @@
 import Head from 'next/head'
 import { Inter } from '@next/font/google'
-import Login from '../components/Login';
-import AddNote from '@/components/AddNote';
+import Logout from '../components/Logout';
+import SignIn from '../components/SignIn';
+import { useSession } from 'next-auth/react';
+import HomePage from '@/components/HomePage';
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
+  const { data: session } = useSession()
+
+  console.log(session);
+
   return (
     <>
       <Head>
@@ -14,22 +20,13 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="container">
-        <Login />
-        <label htmlFor="add-note" className="btn">Add note</label>
-        <input type="checkbox" id="add-note" className="modal-toggle" />
-        <div className="modal">
-          <div className="modal-box">
-            <AddNote id="add-note" />
-          </div>
-        </div>
-
-        <button className="p-8">Add reminder</button>
-        <input placeholder='search' />
-        List of notes:
-        <ul>
-          <li>Note</li>
-        </ul>
+      <main className="container max-w-64 mx-auto my-8">
+        {session && <>
+          <Logout session={session} />
+          <HomePage />
+        </>
+        }
+        {!session && <SignIn />}
       </main>
     </>
   )
