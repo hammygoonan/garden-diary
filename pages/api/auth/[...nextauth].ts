@@ -1,4 +1,4 @@
-import NextAuth from "next-auth"
+import NextAuth, { DefaultSession } from "next-auth"
 import EmailProvider from "next-auth/providers/email";
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import prisma from "../../../db";
@@ -22,7 +22,8 @@ export const authOptions = {
     //   async signIn(params){
     //     // this is where i would check if user exists on database, return true for valid false for invalid.
     //   }
-    async session({ session, token, user }) {
+
+    async session({ session, user }: { session: any, user: any }) {
       if (session?.user) {
         session.user.id = user.id;
       }
