@@ -1,16 +1,27 @@
+import client from '@/db';
+import { unstable_getServerSession } from 'next-auth';
 import Head from 'next/head'
 import { Inter } from '@next/font/google'
 import Logout from '../components/Logout';
 import SignIn from '../components/SignIn';
 import { useSession } from 'next-auth/react';
 import HomePage from '@/components/HomePage';
+import { authOptions } from './api/auth/[...nextauth]';
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default function Home() {
-  const { data: session } = useSession()
+type Props = {
+  data: {
+    id: string,
+    body: string,
+    date: string,
+    createdAt: string,
+    updatedAt: string,
+  }[]
+};
 
-  console.log(session);
+export default function Home({ data }: Props) {
+  const { data: session } = useSession();
 
   return (
     <>
@@ -23,7 +34,7 @@ export default function Home() {
       <main className="container max-w-64 mx-auto my-8">
         {session && <>
           <Logout session={session} />
-          <HomePage />
+          <HomePage data={data} />
         </>
         }
         {!session && <SignIn />}
@@ -31,3 +42,26 @@ export default function Home() {
     </>
   )
 }
+
+export async function getServerSideProps(context: any) {
+  const session = await unstable_getServerSession(context.req, context.res, authOptions);
+  if (!session || !session.user) throw Error('not logged in');
+  const data = await client.post.findMany({
+    where: {
+      userId: session.user.id,
+    },
+    orderBy: [{
+      date: 'desc',
+    }],
+  });
+  return {
+    props: {
+      data: data.map((item) => ({
+        ...item,
+        date: item.updatedAt.toISOString(),
+        createdAt: item.updatedAt.toISOString(),
+        updatedAt: item.updatedAt.toISOString(),
+      }))
+    },
+  }
+};

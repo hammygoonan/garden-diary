@@ -3,43 +3,31 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { unstable_getServerSession } from "next-auth/next"
 import { authOptions } from "../auth/[...nextauth]"
 import client from '@/db'
+import { Post } from '@prisma/client';
 
 type Data = {
-  id: string,
-  body: string
-}
-
-type SessionData = {
-  user: {
-    name: string | null,
-    email: string,
-    image: string | null,
-    id: string,
-  },
-  expires: Date,
+  data: Post;
 };
 
 export default async function notes(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse<Data | Data[]>
 ) {
 
-  const session = await unstable_getServerSession(req, res, authOptions) as SessionData
-
-  if (req.method !== 'POST') {
-    res.status(405)
+  const session = await unstable_getServerSession(req, res, authOptions);
+  if (!session) {
+    res.status(401);
   } else {
-    if (session) {
+    if (req.method == 'POST') {
       const post = await client.post.create({
         data: {
           userId: session.user.id,
           body: req.body.body,
         }
       });
-      res.status(200).json({ id: post.id, body: post.body, })
+      res.status(200).json({ data: post })
     } else {
-      // Not Signed in
-      res.status(401)
+      res.status(405)
     }
   }
   res.end()
