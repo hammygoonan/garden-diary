@@ -7,17 +7,12 @@ import SignIn from '../components/SignIn';
 import { useSession } from 'next-auth/react';
 import HomePage from '@/components/HomePage';
 import { authOptions } from './api/auth/[...nextauth]';
+import { PostData } from '@/types';
 
 const inter = Inter({ subsets: ['latin'] })
 
 type Props = {
-  data: {
-    id: string,
-    body: string,
-    date: string,
-    createdAt: string,
-    updatedAt: string,
-  }[]
+  data: PostData[],
 };
 
 export default function Home({ data }: Props) {
@@ -58,9 +53,9 @@ export async function getServerSideProps(context: any) {
     props: {
       data: data.map((item) => ({
         ...item,
-        date: item.updatedAt.toISOString(),
-        createdAt: item.updatedAt.toISOString(),
-        updatedAt: item.updatedAt.toISOString(),
+        date: item.updatedAt.toString(),
+        createdAt: item.updatedAt.toString(),
+        updatedAt: item.updatedAt.toString(),
       }))
     },
   }

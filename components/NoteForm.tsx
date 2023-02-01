@@ -1,20 +1,25 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
+import { PostData } from '@/types';
 
 type Props = {
-  id: string
+  id: string,
+  data?: PostData,
 }
 
 const placeholder = 'Add your note';
 
 async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
   const formData = new FormData(e.currentTarget);
+  const postId = formData.get('id');
   e.preventDefault();
+  const url = postId ? `/api/notes/${postId}` : '/api/notes';
   try {
-    const response = await axios.post('/api/notes', {
+    const response = await axios.post(url, {
       body: formData.get('body') as string,
+      id: postId ? postId : undefined,
     })
   } catch (e: unknown) {
     if (e instanceof Error) {
@@ -23,13 +28,17 @@ async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
   }
 }
 
-export default function AddNote({ id }: Props) {
+export default function NoteForm({ id, data }: Props) {
+  const title = data ? 'Edit note' : 'Add note';
+  const [body, setBody] = useState(data?.body);
+
   return (
     <div>
       <label htmlFor={id} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
       <form className='form-control' onSubmit={handleSubmit}>
-        <h2 className="font-bold text-lg">Add note</h2>
-        <textarea className='textarea textarea-bordered' name="body" placeholder={placeholder}>
+        <h2 className="font-bold text-lg">{title}</h2>
+        {data && <input type="hidden" name='id' value={data.id} />}
+        <textarea className='textarea textarea-bordered' value={body} onChange={(e) => setBody(e.target.value)} name="body" placeholder={placeholder}>
 
         </textarea>
         <Link

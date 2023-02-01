@@ -1,14 +1,9 @@
-import AddNote from "./AddNote"
+import { PostData } from "@/types";
+import NoteForm from "./NoteForm"
 import PostList from "./PostList"
 
 type Props = {
-  data: {
-    id: string,
-    body: string,
-    date: string,
-    createdAt: string,
-    updatedAt: string,
-  }[]
+  data: PostData[]
 };
 
 export default function HomePage({ data }: Props) {
@@ -17,7 +12,7 @@ export default function HomePage({ data }: Props) {
     <input type="checkbox" id="add-note" className="modal-toggle" />
     <div className="modal">
       <div className="modal-box">
-        <AddNote id="add-note" />
+        <NoteForm id="add-note" />
       </div>
     </div>
 
