@@ -40,7 +40,7 @@ export default function Home({ data }: Props) {
 
 export async function getServerSideProps(context: any) {
   const session = await unstable_getServerSession(context.req, context.res, authOptions);
-  if (!session || !session.user) throw Error('not logged in');
+  if (!session || !session.user) return { props: { data: [] } };
   const data = await client.post.findMany({
     where: {
       userId: session.user.id,

@@ -27,6 +27,13 @@ export default async function notes(
         }
       });
       res.status(200).json({ data: post })
+    } else if (req.method == 'DELETE') {
+      const post = await client.post.delete({
+        where: {
+          id: req.query.id?.toString(),
+        }
+      });
+      res.status(200).json({ data: post })
     } else {
       res.status(405)
     }

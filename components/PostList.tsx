@@ -1,9 +1,14 @@
 import { PostData } from "@/types";
+import axios from "axios";
 import NoteForm from "./NoteForm";
 
 type Props = {
   data: PostData[],
 };
+
+async function deleteNote(id: string) {
+  await axios.delete(`/api/notes/${id}`);
+}
 
 export default function PostList({ data }: Props) {
   return (
@@ -18,13 +23,19 @@ export default function PostList({ data }: Props) {
             {post.body}
           </div>
 
-          <label htmlFor={`edit-note=${idx}`} className="btn">Edit note</label>
+          <label htmlFor={`edit-note=${idx}`} className="btn btn-primary">Edit note</label>
           <input type="checkbox" id={`edit-note=${idx}`} className="modal-toggle" />
           <div className="modal">
             <div className="modal-box">
               <NoteForm id={`edit-note=${idx}`} data={post} />
             </div>
           </div>
+          <button className="btn btn-error btn-xs" onClick={() => {
+            const yn = confirm('This will permanently delete your note, are you sure?');
+            if (yn) {
+              deleteNote(post.id);
+            }
+          }}>Delete note</button>
         </div>
       ))
       }
